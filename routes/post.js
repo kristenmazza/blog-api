@@ -5,38 +5,20 @@ const post_controller = require('../controllers/postController');
 const Post = require('../models/post');
 const mongoose = require('mongoose');
 
-router.get('/', post_controller.index);
+// Get post list
+router.get('/', post_controller.post_list);
 
+// Get full post detail
 router.get('/:postId', getPost, post_controller.post_detail);
 
+// Create post
 router.post('/', post_controller.post_create);
 
+// Delete post
 router.delete('/:postId', getPost, post_controller.post_delete);
 
-// router.put('/edit/:postId', (req, res) => {
-//   res.json({
-//     id,
-//     title: req.body.title,
-//     content: req.body.text,
-//     userId: req.context.me.id,
-//     published: Date.now(),
-//   });
-// });
-
-// router.post('/', (req, res) => {
-//   const id = uuidv4();
-//   const post = {
-//     id,
-//     title: req.body.title,
-//     content: req.body.text,
-//     userId: req.context.me.id,
-//     published: Date.now(),
-//   };
-
-//   req.context.models.posts[id] = post;
-
-//   return res.send(post);
-// });
+// Update post
+router.put('/edit/:postId', getPost, post_controller.post_update);
 
 function verifyToken(req, res, next) {
   // Get auth header value
