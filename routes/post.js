@@ -1,48 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
+const post_controller = require('../controllers/postController');
+const Post = require('../models/post');
+const mongoose = require('mongoose');
 
-router.get('/', (req, res) => {
-  return res.send(Object.values(req.context.models.posts));
-});
+router.get('/', post_controller.index);
 
-router.get('/:postId', (req, res) => {
-  return res.send(req.context.models.posts[req.params.postId]);
-});
+router.get('/:postId', getPost, post_controller.post_detail);
 
-router.put('/edit/:postId', (req, res) => {
-  res.json({
-    id,
-    title: req.body.title,
-    content: req.body.text,
-    userId: req.context.me.id,
-    published: Date.now(),
-  });
-});
+router.post('/', post_controller.post_create);
 
-router.post('/', (req, res) => {
-  const id = uuidv4();
-  const post = {
-    id,
-    title: req.body.title,
-    content: req.body.text,
-    userId: req.context.me.id,
-    published: Date.now(),
-  };
+router.delete('/:postId', getPost, post_controller.post_delete);
 
-  req.context.models.posts[id] = post;
+// router.put('/edit/:postId', (req, res) => {
+//   res.json({
+//     id,
+//     title: req.body.title,
+//     content: req.body.text,
+//     userId: req.context.me.id,
+//     published: Date.now(),
+//   });
+// });
 
-  return res.send(post);
-});
+// router.post('/', (req, res) => {
+//   const id = uuidv4();
+//   const post = {
+//     id,
+//     title: req.body.title,
+//     content: req.body.text,
+//     userId: req.context.me.id,
+//     published: Date.now(),
+//   };
 
-router.delete('/:postId', (req, res) => {
-  const { [req.params.postId]: post, ...otherposts } = req.context.models.posts;
+//   req.context.models.posts[id] = post;
 
-  req.context.models.posts = otherposts;
-
-  return res.send(post);
-});
+//   return res.send(post);
+// });
 
 function verifyToken(req, res, next) {
   // Get auth header value
@@ -59,6 +53,27 @@ function verifyToken(req, res, next) {
     req.user = user;
     next();
   });
+}
+
+// Middleware to find post by ID
+async function getPost(req, res, next) {
+  let post;
+  try {
+    if (!mongoose.isValidObjectId(req.params.postId)) {
+      return res.status(404).json({ message: 'Cannot find post' });
+    }
+
+    post = await Post.findById(req.params.postId);
+
+    if (post === null) {
+      return res.status(404).json({ message: 'Cannot find post' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  res.post = post;
+  next();
 }
 
 module.exports = router;

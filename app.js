@@ -2,9 +2,22 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const routes = require('./routes');
 const models = require('./models');
+const routes = require('./routes');
 require('dotenv').config();
+const mongoose = require('mongoose');
+
+// Removes prepatory warnings for Mongoose 7.
+mongoose.set('strictQuery', false);
+
+// Define the database URL to connect to.
+const mongoDB = process.env.MONGODB_URI;
+
+// Wait for database to connect, logging an error if there is a problem.
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
 
 const app = express();
 
