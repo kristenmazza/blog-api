@@ -1,25 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
+const user_controller = require('../controllers/userController');
 
-router.post('/login', (req, res) => {
-  // Authenticate user: to complete
+// User registration
+router.post('/signup', user_controller.user_create);
 
-  const username = req.body.username;
+// User login
+router.post('/login', user_controller.user_login);
 
-  const user = { name: username };
-
-  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-  res.json({ accessToken: accessToken });
-});
-
-router.get('/', (req, res) => {
-  return res.send(Object.values(req.context.models.users));
-});
-
-router.get('/:userId', (req, res) => {
-  return res.send(req.context.models.users[req.params.userId]);
-});
-
+// router.get('/logout', (req, res, next) => {
+//   req.logout(function (err) {
+//     if (err) {
+//       return next(err);
+//     }
+//     res.json({ message: 'Logged out' });
+//   });
+// });
 
 module.exports = router;

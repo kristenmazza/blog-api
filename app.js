@@ -3,11 +3,12 @@ require('dotenv').config();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const models = require('./models');
 const routes = require('./routes');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const multer = require('multer');
+const passport = require('passport');
+const bodyParser = require('body-parser');
 
 // Removes prepatory warnings for Mongoose 7.
 mongoose.set('strictQuery', false);
@@ -29,19 +30,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-// app.use((req, res, next) => {
-//   req.context = {
-//     models,
-//     me: models.users[1],
-//   };
-//   next();
-// });
+// Passport authentication
+app.use(passport.initialize());
+require('./config/auth');
 
+// Routes
 app.use('/session', routes.session);
 app.use('/users', routes.user);
 app.use('/posts', routes.post);
 
+// For multer file upload errors
 app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -57,5 +57,11 @@ app.use((error, req, res, next) => {
     }
   }
 });
+
+// // Handle errors.
+// app.use(function (err, req, res, next) {
+//   res.status(err.status || 500);
+//   res.json({ error: err });
+// });
 
 module.exports = app;
