@@ -3,6 +3,7 @@ const Post = require('../models/post');
 const User = require('../models/user');
 const { body, validationResult, checkSchema } = require('express-validator');
 const { s3Upload } = require('../services/ImageUpload');
+const uuid = require('uuid').v4;
 
 // Show post list
 exports.post_list = asyncHandler(async (req, res, next) => {
@@ -109,42 +110,24 @@ exports.post_update = [
   }),
 ];
 
-// Create image for post
-exports.post_image_create = asyncHandler(async (req, res, next) => {
-  const image = req.file;
+// Update post to include image
+exports.put_image_create = asyncHandler(async (req, res, next) => {
   try {
-    const results = await s3Upload(image);
+    const buffer = req.file.buffer;
+    const key = `uploads/${uuid()}-${req.file.originalname}`;
+    const results = await s3Upload(buffer, key);
 
-    let update = { uploaded_image: req.file.name };
+    // Formulate url to add to database
+    const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    let update = { uploaded_image: url };
+
+    // Update blog post with image url
     const post = await Post.findByIdAndUpdate(req.params.postId, update, {
       new: true,
     });
-    console.log(req.file);
-    console.log(results);
 
     return res.json({ success: true, post: post });
   } catch (err) {
     res.status(400).json({ success: false, error: err });
   }
 });
-
-// // Create image for post
-// exports.post_image_create = asyncHandler(async (req, res, next) => {
-//   singleUpload(req, res, function (err) {
-//     if (err) {
-//       return res.json({
-//         success: false,
-//         errors: {
-//           title: 'Image Upload Error',
-//           detail: err.message,
-//           error: err,
-//         },
-//       });
-//     }
-
-//     let update = { uploaded_image: req.file.location };
-//     Post.findByIdAndUpdate(req.params.postId, update, { new: true })
-//       .then((post) => res.status(200).json({ success: true, post: post }))
-//       .catch((err) => res.status(400).json({ success: false, error: err }));
-//   });
-// });

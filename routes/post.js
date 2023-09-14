@@ -39,11 +39,11 @@ router.delete('/:postId', getPost, post_controller.post_delete);
 // Update post
 router.put('/edit/:postId', getPost, post_controller.post_update);
 
-// Create main image for post
-router.post(
+// Update post to include image
+router.put(
   '/upload/:postId',
   upload.single('uploaded_image'),
-  post_controller.post_image_create
+  post_controller.put_image_create
 );
 
 function verifyToken(req, res, next) {
