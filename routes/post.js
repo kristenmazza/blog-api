@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const post_controller = require('../controllers/postController');
+const comment_controller = require('../controllers/commentController');
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
@@ -46,6 +48,26 @@ router.put(
   post_controller.put_image_create
 );
 
+// Get comments of a post
+router.get('/:postId/comments', comment_controller.comment_list);
+
+// Create comment
+router.post('/:postId/comments', comment_controller.comment_create);
+
+// Show comment detail
+router.get(
+  '/:postId/comments/:commentId',
+  getComment,
+  comment_controller.comment_detail
+);
+
+// Delete comment
+router.delete(
+  '/:postId/comments/:commentId/delete',
+  getComment,
+  comment_controller.comment_delete
+);
+
 function verifyToken(req, res, next) {
   // Get auth header value
   const bearerHeader = req.headers['authorization'];
@@ -81,6 +103,27 @@ async function getPost(req, res, next) {
   }
 
   res.post = post;
+  next();
+}
+
+// Middleware to find commment by ID
+async function getComment(req, res, next) {
+  let comment;
+  try {
+    if (!mongoose.isValidObjectId(req.params.commentId)) {
+      return res.status(404).json({ message: 'Cannot find comment' });
+    }
+
+    comment = await Comment.findById(req.params.commentId);
+
+    if (comment === null) {
+      return res.status(404).json({ message: 'Cannot find comment' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  res.comment = comment;
   next();
 }
 
