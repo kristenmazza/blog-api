@@ -4,6 +4,25 @@ const jwt = require('jsonwebtoken');
 const post_controller = require('../controllers/postController');
 const Post = require('../models/post');
 const mongoose = require('mongoose');
+const multer = require('multer');
+
+// Store file upload in memory
+const storage = multer.memoryStorage();
+
+// Filter file upload by type
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE'), false);
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 1000000 },
+});
 
 // Get post list
 router.get('/', post_controller.post_list);
@@ -19,6 +38,13 @@ router.delete('/:postId', getPost, post_controller.post_delete);
 
 // Update post
 router.put('/edit/:postId', getPost, post_controller.post_update);
+
+// Create main image for post
+router.post(
+  '/upload/:postId',
+  upload.single('uploaded_image'),
+  post_controller.post_image_create
+);
 
 function verifyToken(req, res, next) {
   // Get auth header value
