@@ -16,9 +16,10 @@ const strategy = new JwtStrategy(opts, (payload, done) => {
   // Get ID of user from payload sub object.
   User.findOne({ _id: payload.sub })
     .then((user) => {
-      // Look up in database, return it to passport, then passport
+      // Look up id in database, return it to passport, then passport
       // attaches it to req.user object within Express framework.
-      if (user) {
+      // Only users with admin status are returned
+      if (user.admin) {
         return done(null, user);
       } else {
         return done(null, false);

@@ -36,6 +36,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 require('./config/auth')(passport);
 app.use(passport.initialize());
 
+// Gives access to currentUser
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
+
 // Routes
 app.use('/session', routes.session);
 app.use('/users', routes.user);
@@ -58,10 +64,10 @@ app.use((error, req, res, next) => {
   }
 });
 
-// // Handle errors.
-// app.use(function (err, req, res, next) {
-//   res.status(err.status || 500);
-//   res.json({ error: err });
-// });
+// Handle errors
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({ error: err });
+});
 
 module.exports = app;

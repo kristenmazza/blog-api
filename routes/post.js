@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
 const post_controller = require('../controllers/postController');
 const comment_controller = require('../controllers/commentController');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const passport = require('passport');
 
 // Store file upload in memory
 const storage = multer.memoryStorage();
@@ -33,17 +33,32 @@ router.get('/', post_controller.post_list);
 router.get('/:postId', getPost, post_controller.post_detail);
 
 // Create post
-router.post('/', post_controller.post_create);
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  post_controller.post_create
+);
 
 // Delete post
-router.delete('/:postId', getPost, post_controller.post_delete);
+router.delete(
+  '/:postId',
+  passport.authenticate('jwt', { session: false }),
+  getPost,
+  post_controller.post_delete
+);
 
 // Update post
-router.put('/edit/:postId', getPost, post_controller.post_update);
+router.put(
+  '/edit/:postId',
+  passport.authenticate('jwt', { session: false }),
+  getPost,
+  post_controller.post_update
+);
 
 // Update post to include image
 router.put(
   '/upload/:postId',
+  passport.authenticate('jwt', { session: false }),
   upload.single('uploaded_image'),
   post_controller.put_image_create
 );
@@ -64,26 +79,10 @@ router.get(
 // Delete comment
 router.delete(
   '/:postId/comments/:commentId/delete',
+  passport.authenticate('jwt', { session: false }),
   getComment,
   comment_controller.comment_delete
 );
-
-function verifyToken(req, res, next) {
-  // Get auth header value
-  const bearerHeader = req.headers['authorization'];
-
-  // If bearer exists, split at the space
-  const token = bearerHeader && bearerHeader.split(' ')[1];
-
-  // If it does not exist, send error status
-  if (token === null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
 
 // Middleware to find post by ID
 async function getPost(req, res, next) {

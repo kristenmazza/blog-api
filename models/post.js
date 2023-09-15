@@ -11,4 +11,8 @@ const PostSchema = new Schema({
   uploaded_image: { type: String },
 });
 
+PostSchema.virtual('url').get(function () {
+  return 'posts/${this._id}';
+});
+
 module.exports = mongoose.model('Post', PostSchema);
