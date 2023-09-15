@@ -3,6 +3,7 @@ const User = require('../models/user');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const utils = require('../lib/utils');
 
 // User registration
 exports.user_create = [
@@ -46,7 +47,13 @@ exports.user_create = [
         });
 
         const result = await user.save();
-        res.json(result);
+        const jwt = utils.issueJWT(user);
+        res.json({
+          success: true,
+          result,
+          token: jwt.token,
+          expiresIn: jwt.expiresIn,
+        });
       });
     } catch (err) {
       return next(err);
@@ -73,27 +80,33 @@ exports.user_login = [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Find user based on username
-    const user = await User.findOne({ username: req.body.username });
-
     try {
+      // Find user based on username
+      const user = await User.findOne({ username: req.body.username });
+
+      if (!user) {
+        res
+          .status(401)
+          .json({ success: false, message: 'Could not find user' });
+      }
+
       // Compare password received in request with hashed one in database
-      const match = await bcrypt.compare(req.body.password, user.password);
+      const isValid = await bcrypt.compare(req.body.password, user.password);
 
-      // Create token using JWT by passing in user data and token secret
-      const accessToken = jwt.sign(
-        JSON.stringify(user),
-        process.env.TOKEN_SECRET
-      );
-
-      // If match is true, return token in JSON format
-      if (match) {
-        res.json({ accessToken: accessToken });
+      if (isValid) {
+        // If password is valid, issue token
+        const tokenObject = utils.issueJWT(user);
+        res.json({
+          success: true,
+          user,
+          token: tokenObject.token,
+          expiresIn: tokenObject.expiresIn,
+        });
       } else {
-        res.status(401).json({ message: 'Invalid Credentials' });
+        res.status(401).json({ message: 'Invalid password' });
       }
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   }),
 ];

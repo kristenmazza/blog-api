@@ -1,5 +1,4 @@
 const express = require('express');
-require('dotenv').config();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -9,6 +8,7 @@ const cors = require('cors');
 const multer = require('multer');
 const passport = require('passport');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 // Removes prepatory warnings for Mongoose 7.
 mongoose.set('strictQuery', false);
@@ -33,8 +33,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Passport authentication
+require('./config/auth')(passport);
 app.use(passport.initialize());
-require('./config/auth');
 
 // Routes
 app.use('/session', routes.session);
