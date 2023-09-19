@@ -43,7 +43,6 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use('/session', routes.session);
 app.use('/users', routes.user);
 app.use('/posts', routes.post);
 app.use('/auth', routes.auth);

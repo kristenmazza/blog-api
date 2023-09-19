@@ -7,6 +7,7 @@ const Comment = require('../models/comment');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const passport = require('passport');
+const { isAdmin } = require('../lib/utils');
 
 // Store file upload in memory
 const storage = multer.memoryStorage();
@@ -36,6 +37,7 @@ router.get('/:postId', getPost, post_controller.post_detail);
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
+  isAdmin,
   post_controller.post_create
 );
 
@@ -43,6 +45,7 @@ router.post(
 router.delete(
   '/:postId',
   passport.authenticate('jwt', { session: false }),
+  isAdmin,
   getPost,
   post_controller.post_delete
 );
@@ -51,6 +54,7 @@ router.delete(
 router.put(
   '/:postId',
   passport.authenticate('jwt', { session: false }),
+  isAdmin,
   getPost,
   post_controller.post_update
 );
@@ -59,6 +63,7 @@ router.put(
 router.put(
   '/:postId/image',
   passport.authenticate('jwt', { session: false }),
+  isAdmin,
   upload.single('uploaded_image'),
   post_controller.put_image_create
 );
@@ -73,6 +78,7 @@ router.post('/:postId/comments', comment_controller.comment_create);
 router.delete(
   '/:postId/comments/:commentId',
   passport.authenticate('jwt', { session: false }),
+  isAdmin,
   getComment,
   comment_controller.comment_delete
 );
