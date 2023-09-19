@@ -46,6 +46,7 @@ app.use((req, res, next) => {
 app.use('/session', routes.session);
 app.use('/users', routes.user);
 app.use('/posts', routes.post);
+app.use('/auth', routes.auth);
 
 // For multer file upload errors
 app.use((error, req, res, next) => {

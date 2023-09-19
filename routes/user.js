@@ -8,6 +8,14 @@ router.get(
   '/protected',
   passport.authenticate('jwt', { session: false }),
   (req, res, next) => {
+    if (req.user.admin) {
+      next();
+    } else {
+      return res.status(401).send('No no... Unauthorized');
+    }
+  },
+  (req, res, next) => {
+    console.log(req);
     res.status(200).json({
       success: true,
       message: 'You are successfully authenticated to this route!',
@@ -15,10 +23,7 @@ router.get(
   }
 );
 
-// User registration
-router.post('/signup', user_controller.user_create);
-
-// User login
-router.post('/login', user_controller.user_login);
+// Get user
+router.get('/:userId', user_controller.user_detail);
 
 module.exports = router;

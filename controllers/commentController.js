@@ -43,11 +43,6 @@ exports.comment_create = [
   }),
 ];
 
-// Show comment detail
-exports.comment_detail = asyncHandler(async (req, res, next) => {
-  res.send(res.comment);
-});
-
 // Delete comment
 exports.comment_delete = asyncHandler(async (req, res, next) => {
   try {

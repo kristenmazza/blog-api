@@ -49,7 +49,7 @@ router.delete(
 
 // Update post
 router.put(
-  '/edit/:postId',
+  '/:postId',
   passport.authenticate('jwt', { session: false }),
   getPost,
   post_controller.post_update
@@ -57,7 +57,7 @@ router.put(
 
 // Update post to include image
 router.put(
-  '/upload/:postId',
+  '/:postId/image',
   passport.authenticate('jwt', { session: false }),
   upload.single('uploaded_image'),
   post_controller.put_image_create
@@ -69,16 +69,9 @@ router.get('/:postId/comments', comment_controller.comment_list);
 // Create comment
 router.post('/:postId/comments', comment_controller.comment_create);
 
-// Show comment detail
-router.get(
-  '/:postId/comments/:commentId',
-  getComment,
-  comment_controller.comment_detail
-);
-
 // Delete comment
 router.delete(
-  '/:postId/comments/:commentId/delete',
+  '/:postId/comments/:commentId',
   passport.authenticate('jwt', { session: false }),
   getComment,
   comment_controller.comment_delete

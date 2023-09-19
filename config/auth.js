@@ -19,7 +19,7 @@ const strategy = new JwtStrategy(opts, (payload, done) => {
       // Look up id in database, return it to passport, then passport
       // attaches it to req.user object within Express framework.
       // Only users with admin status are returned
-      if (user.admin) {
+      if (user) {
         return done(null, user);
       } else {
         return done(null, false);
