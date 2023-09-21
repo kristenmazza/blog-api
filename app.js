@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -8,7 +9,6 @@ const cors = require('cors');
 const multer = require('multer');
 const passport = require('passport');
 const bodyParser = require('body-parser');
-require('dotenv').config();
 
 // Removes prepatory warnings for Mongoose 7.
 mongoose.set('strictQuery', false);
