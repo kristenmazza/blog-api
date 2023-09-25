@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
+const mongoose = require('mongoose');
 
 // Get user
 exports.user_detail = asyncHandler(async (req, res, next) => {
