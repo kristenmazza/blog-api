@@ -31,7 +31,7 @@ const upload = multer({
 router.get('/', post_controller.post_list);
 
 // Get full post detail
-router.get('/:postId', getPost, post_controller.post_detail);
+router.get('/:slug', getPost, post_controller.post_detail);
 
 // Create post
 router.post(
@@ -87,11 +87,7 @@ router.delete(
 async function getPost(req, res, next) {
   let post;
   try {
-    if (!mongoose.isValidObjectId(req.params.postId)) {
-      return res.status(404).json({ message: 'Cannot find post' });
-    }
-
-    post = await Post.findById(req.params.postId);
+    post = await Post.findOne({ slug: { $eq: req.params.slug } });
 
     if (post === null) {
       return res.status(404).json({ message: 'Cannot find post' });
