@@ -69,10 +69,10 @@ router.put(
 );
 
 // Get comments of a post
-router.get('/:postId/comments', comment_controller.comment_list);
+router.get('/:slug/comments', comment_controller.comment_list);
 
 // Create comment
-router.post('/:postId/comments', comment_controller.comment_create);
+router.post('/:slug/comments', comment_controller.comment_create);
 
 // Delete comment
 router.delete(
