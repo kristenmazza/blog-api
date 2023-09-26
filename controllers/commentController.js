@@ -1,11 +1,15 @@
 const asyncHandler = require('express-async-handler');
 const Comment = require('../models/comment');
+const Post = require('../models/post');
 const { body, validationResult } = require('express-validator');
 
 // Show comments of a post
 exports.comment_list = asyncHandler(async (req, res, next) => {
   try {
-    const comments = await Comment.find({ post: req.params.postId }).exec();
+    const currentPost = await Post.findOne({ slug: { $eq: req.params.slug } });
+
+    const comments = await Comment.find({ post: currentPost._id }).exec();
+
     res.json(comments);
   } catch (err) {
     res.status(500).json({ message: err.message });
