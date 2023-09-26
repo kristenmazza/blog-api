@@ -31,10 +31,19 @@ exports.comment_create = [
       return res.status(400).json({ errors: errors.array() });
     }
 
+    let currentPost;
+    try {
+      currentPost = await Post.findOne({
+        slug: { $eq: req.params.slug },
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+
     const comment = new Comment({
       message: req.body.message,
       author: req.body.author,
-      post: req.params.postId,
+      post: currentPost._id,
     });
 
     try {
