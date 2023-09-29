@@ -6,7 +6,7 @@ const PostSchema = new Schema({
   title: { type: String, required: true },
   content: { type: String, required: true },
   date: { type: Date, default: () => Date.now() },
-  author: { type: Schema.Types.ObjectId, ref: User, required: true },
+  author: { type: Schema.Types.ObjectId, ref: User },
   published: { type: Boolean, required: true },
   uploaded_image: { type: String },
   slug: { type: String, unique: true },
