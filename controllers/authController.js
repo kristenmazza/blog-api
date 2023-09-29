@@ -23,11 +23,6 @@ exports.register = [
   body('password')
     .isLength({ min: 5 })
     .withMessage('Password must be at least 5 characters'),
-  body('c_password')
-    .custom((value, { req }) => {
-      return value === req.body.password;
-    })
-    .withMessage('Passwords do not match'),
 
   // Process request after validation and sanitization
   asyncHandler(async (req, res, next) => {
