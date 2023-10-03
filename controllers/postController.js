@@ -84,6 +84,9 @@ exports.post_update = [
     }
 
     const author = await User.find({}).exec();
+    const currentPost = await Post.findOne({
+      slug: req.params.slug,
+    });
 
     // Create Post object with validated/sanitized data
     const post = new Post({
@@ -92,13 +95,13 @@ exports.post_update = [
       date: Date.now(),
       author: author[0]._id,
       published: req.body.published,
-      _id: req.params.postId,
+      _id: currentPost._id,
     });
 
     try {
       // Update post to match the new Post object
-      const updatedPost = await Post.findByIdAndUpdate(
-        req.params.postId,
+      const updatedPost = await Post.findOneAndUpdate(
+        { slug: req.params.slug },
         post,
         {}
       );
@@ -122,9 +125,13 @@ exports.put_image_create = asyncHandler(async (req, res, next) => {
     let update = { uploaded_image: url };
 
     // Update blog post with image url
-    const post = await Post.findByIdAndUpdate(req.params.postId, update, {
-      new: true,
-    });
+    const post = await Post.findOneAndUpdate(
+      { slug: req.params.slug },
+      update,
+      {
+        new: true,
+      }
+    );
 
     return res.json({ success: true, post: post });
   } catch (err) {

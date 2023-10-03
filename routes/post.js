@@ -43,7 +43,7 @@ router.post(
 
 // Delete post
 router.delete(
-  '/:postId',
+  '/:slug',
   passport.authenticate('jwt', { session: false }),
   isAdmin,
   getPost,
@@ -52,7 +52,7 @@ router.delete(
 
 // Update post
 router.put(
-  '/:postId',
+  '/:slug',
   passport.authenticate('jwt', { session: false }),
   isAdmin,
   getPost,
@@ -61,7 +61,7 @@ router.put(
 
 // Update post to include image
 router.put(
-  '/:postId/image',
+  '/:slug/image',
   passport.authenticate('jwt', { session: false }),
   isAdmin,
   upload.single('uploaded_image'),
