@@ -39,7 +39,11 @@ exports.post_create = [
     .trim()
     .notEmpty()
     .customSanitizer((value) => {
-      return sanitizeHtml(value);
+      const sanitized = sanitizeHtml(value, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+      });
+
+      return sanitized;
     }),
   body('published', 'Published status must be indicated').notEmpty(),
 
@@ -81,7 +85,11 @@ exports.post_update = [
     .trim()
     .notEmpty()
     .customSanitizer((value) => {
-      return sanitizeHtml(value);
+      const sanitized = sanitizeHtml(value, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img ']),
+      });
+
+      return sanitized;
     }),
   body('published', 'Published status must be indicated').notEmpty(),
 
