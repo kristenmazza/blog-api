@@ -4,6 +4,7 @@ const User = require('../models/user');
 const { body, validationResult, checkSchema } = require('express-validator');
 const { s3Upload } = require('../services/ImageUpload');
 const uuid = require('uuid').v4;
+const sanitizeHtml = require('sanitize-html');
 
 // Show post list
 exports.post_list = asyncHandler(async (req, res, next) => {
@@ -34,7 +35,12 @@ exports.post_delete = asyncHandler(async (req, res, next) => {
 exports.post_create = [
   // Validate and sanitize fields
   body('title', 'Title must not be empty').trim().notEmpty(),
-  body('content', 'Post must not be empty').trim().notEmpty(),
+  body('content', 'Post must not be empty')
+    .trim()
+    .notEmpty()
+    .customSanitizer((value) => {
+      return sanitizeHtml(value);
+    }),
   body('published', 'Published status must be indicated').notEmpty(),
 
   // Process request after validation and sanitization
@@ -71,7 +77,12 @@ exports.post_create = [
 exports.post_update = [
   // Validate and sanitize fields
   body('title', 'Title must not be empty').trim().notEmpty(),
-  body('content', 'Post must not be empty').trim().notEmpty(),
+  body('content', 'Post must not be empty')
+    .trim()
+    .notEmpty()
+    .customSanitizer((value) => {
+      return sanitizeHtml(value);
+    }),
   body('published', 'Published status must be indicated').notEmpty(),
 
   // Process request after validation and sanitization
