@@ -76,7 +76,7 @@ router.post('/:slug/comments', comment_controller.comment_create);
 
 // Delete comment
 router.delete(
-  '/:postId/comments/:commentId',
+  '/:slug/comments/:commentId',
   passport.authenticate('jwt', { session: false }),
   isAdmin,
   getComment,
