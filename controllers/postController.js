@@ -39,7 +39,9 @@ exports.post_create = [
     .trim()
     .notEmpty()
     .customSanitizer((value) => {
-      return sanitizeHtml(value);
+      const sanitizedHtml = sanitizeHtml(value);
+      const cleanedHtml = sanitizedHtml.replace(/<p[^>]*><\/p[^>]*>/g, '');
+      return cleanedHtml;
     }),
   body('published', 'Published status must be indicated').notEmpty(),
 
@@ -81,7 +83,9 @@ exports.post_update = [
     .trim()
     .notEmpty()
     .customSanitizer((value) => {
-      return sanitizeHtml(value);
+      const sanitizedHtml = sanitizeHtml(value);
+      const cleanedHtml = sanitizedHtml.replace(/<p[^>]*><\/p[^>]*>/g, '');
+      return cleanedHtml;
     }),
   body('published', 'Published status must be indicated').notEmpty(),
 
