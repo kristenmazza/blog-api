@@ -86,7 +86,7 @@ exports.post_update = [
     .notEmpty()
     .customSanitizer((value) => {
       const sanitized = sanitizeHtml(value, {
-        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img ']),
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
       });
 
       return sanitized;
