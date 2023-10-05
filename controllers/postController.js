@@ -111,7 +111,7 @@ exports.post_update = [
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
-      date: Date.now(),
+      date: currentPost.date,
       author: author[0]._id,
       published: req.body.published,
       _id: currentPost._id,
