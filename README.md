@@ -33,3 +33,15 @@ Follow these steps to get the Blog API up and running on your local machine.
    - AWS_BUCKET_NAME=Your bucket name
 4. Use `npm run serverstart` to start the server in development mode.
 5. You can test your API using various methods, including using tools like curl or Postman to send HTTP requests.
+
+## Deployment to Fly.io
+
+The Express.js backend is deployed as a Fly VM to Fly.io. The definition for the deployment is in [fly.toml](./fly.toml) and it references the [Dockerfile](./Dockerfile).
+
+The Fly.io command line interface is called `fly`. Install it with Homebrew package `flyctl`:
+
+    brew install flyctl
+
+To deploy change to Fly.io:
+
+    fly deploy
