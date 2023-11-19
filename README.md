@@ -7,6 +7,8 @@ There are a few other repositories associated with this blog project:
 
 The Blog API serves as the backend for a blog system. The API follows RESTful design principles with routes organized around posts, comments, authentication, and users. CRUD operations for posts and comments are performed through the endpoints, and user authentication for securing editing functions is included.
 
+See the blog live: https://blog.kristenmazza.dev/ :point_left:
+
 ## Technologies Used
 
 - Node.js
